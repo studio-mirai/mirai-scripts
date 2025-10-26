@@ -4,10 +4,10 @@ import { cleanEnv, str } from "envalid";
 import { SuiClient } from "@mysten/sui/client";
 
 const env = cleanEnv(process.env, {
+  DESTINATION_ADDRESS: str(),
   SUI_PRIVATE_KEY: str(),
   SUI_RPC_URL: str(),
   VALIDATOR_ADDRESS: str(),
-  DESTINATION_ADDRESS: str(),
 });
 
 const suiClient = new SuiClient({
