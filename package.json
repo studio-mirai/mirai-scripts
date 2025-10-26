@@ -1,0 +1,16 @@
+{
+  "name": "mirai-scripts",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@mysten/sui": "^1.43.1",
+    "@mysten/walrus": "^0.8.1"
+  }
+}
