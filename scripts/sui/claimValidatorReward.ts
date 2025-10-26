@@ -7,7 +7,6 @@ const env = cleanEnv(process.env, {
   DESTINATION_ADDRESS: str(),
   SUI_PRIVATE_KEY: str(),
   SUI_RPC_URL: str(),
-  VALIDATOR_ADDRESS: str(),
 });
 
 const suiClient = new SuiClient({
@@ -15,9 +14,10 @@ const suiClient = new SuiClient({
 });
 
 const keypair = Ed25519Keypair.fromSecretKey(env.SUI_PRIVATE_KEY);
+const validatorAddress = keypair.getPublicKey().toSuiAddress();
 
 const stakePositions = await suiClient.getStakes({
-  owner: env.VALIDATOR_ADDRESS,
+  owner: validatorAddress,
 });
 const stakeIds = [];
 for (const stakePosition of stakePositions) {
@@ -27,7 +27,7 @@ for (const stakePosition of stakePositions) {
   }
 }
 if (stakeIds.length === 0) {
-  console.log(`No stakes found for ${env.VALIDATOR_ADDRESS}`);
+  console.log(`No stakes found for ${validatorAddress}`);
   process.exit(0);
 }
 console.log(stakeIds);
