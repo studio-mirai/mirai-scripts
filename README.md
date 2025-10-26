@@ -1,5 +1,7 @@
 # Mirai Scripts
 
+A collection of helpful scripts that we use everyday at Studio Mirai.
+
 # Sui
 
 ## Claim Validator Reward
