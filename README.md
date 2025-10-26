@@ -1,15 +1,21 @@
-# mirai-scripts
+# Mirai Scripts
 
-To install dependencies:
+# Sui
 
-```bash
-bun install
+## Claim Validator Reward
+
+```
+bun run scripts/sui/claimValidatorReward.ts
 ```
 
-To run:
+## Set Validator Commission Rate
 
-```bash
-bun run index.ts
+```
+bun run scripts/sui/setValidatorCommissionRate.ts
 ```
 
-This project was created using `bun init` in bun v1.3.0. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+## Set Validator Gas Price
+
+```
+bun run scripts/sui/setValidatorGasPrice.ts
+```
