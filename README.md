@@ -50,6 +50,8 @@ bun run scripts/sui/setValidatorGasPrice.ts
 - `DESTINATION_ADDRESS` - The address to transfer commission rewards to.
 - `SUI_PRIVATE_KEY` - Sui private key for authorizing the transaction.
 - `SUI_RPC_URL` - Sui RPC URL to use for sending the transaction.
+- `WALRUS_PACKAGE_ID` - Package ID for the Walrus package.
+- `WALRUS_STAKING_PACKAGE_ID` - Package ID for the Walrus staking package.
 - `WALRUS_STORAGE_NODE_ID` - The Storage Node object ID for your node.
 
 ```
