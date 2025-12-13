@@ -30,7 +30,6 @@ if (stakeIds.length === 0) {
   console.log(`No stakes found for ${validatorAddress}`);
   process.exit(0);
 }
-console.log(stakeIds);
 
 const tx = new Transaction();
 const balance = tx.moveCall({

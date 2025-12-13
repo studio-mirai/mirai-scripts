@@ -7,9 +7,8 @@ import {
   executeTransaction,
 } from "../utils.js";
 import { Aftermath } from "aftermath-ts-sdk";
-import { bcs } from "@mysten/bcs";
-
-const SUI_COIN_TYPE = "0x2::sui::SUI";
+import { extractCoinValue } from "../utils";
+import { COIN_TYPES } from "../constants";
 
 export function registerSuiCommands(program: Command) {
   const sui = program.command("sui").description("Sui validator operations");
@@ -48,6 +47,7 @@ async function claimValidatorCommission({
   swapSlippage = 0.01,
 }: {
   transferTo: string;
+  network: "mainnet" | "testnet";
   rpcUrl: string;
   swapTo?: string;
   swapSlippage?: number;
@@ -84,7 +84,7 @@ async function claimValidatorCommission({
   const balance = tx.moveCall({
     target: "0x2::balance::zero",
     arguments: [],
-    typeArguments: [SUI_COIN_TYPE],
+    typeArguments: ["0x2::sui::SUI"],
   });
   for (const stakeId of stakeIds) {
     const withdrawnBalance = tx.moveCall({
@@ -94,46 +94,30 @@ async function claimValidatorCommission({
     tx.moveCall({
       target: "0x2::balance::join",
       arguments: [balance, withdrawnBalance],
-      typeArguments: [SUI_COIN_TYPE],
+      typeArguments: ["0x2::sui::SUI"],
     });
   }
   const coin = tx.moveCall({
     target: "0x2::coin::from_balance",
     arguments: [balance],
-    typeArguments: [SUI_COIN_TYPE],
+    typeArguments: ["0x2::sui::SUI"],
   });
   if (swapTo) {
     const afSdk = new Aftermath("MAINNET");
     await afSdk.init();
     const router = afSdk.Router();
-
-    tx.moveCall({
-      target: "0x2::coin::value",
-      arguments: [coin],
-      typeArguments: [SUI_COIN_TYPE],
-    });
-    let dryRunResult = await client.devInspectTransactionBlock({
-      transactionBlock: tx,
-      sender: validatorAddress,
-    });
-    const coinValueResult =
-      dryRunResult.results?.[dryRunResult.results.length - 1];
-    const coinInAmountBytes: Uint8Array | undefined = coinValueResult
-      ?.returnValues?.[0]?.[0]
-      ? new Uint8Array(coinValueResult.returnValues[0][0])
-      : undefined;
-    if (!coinInAmountBytes) {
-      console.error("Error: coinInAmountBytes is undefined.");
-      process.exit(1);
-    }
-    const coinInAmount = bcs.u64().parse(coinInAmountBytes!);
-    console.log(`Coin in amount: ${coinInAmount}`);
+    const coinInAmount = await extractCoinValue(
+      tx,
+      coin,
+      "0x2::sui::SUI",
+      client,
+      validatorAddress
+    );
     const route = await router.getCompleteTradeRouteGivenAmountIn({
-      coinInType: SUI_COIN_TYPE,
+      coinInType: "0x2::sui::SUI",
       coinOutType: swapTo,
-      coinInAmount: BigInt(coinInAmount),
+      coinInAmount,
     });
-    console.log(route);
     const { tx: txWithRoute, coinOutId } =
       await router.addTransactionForCompleteTradeRoute({
         tx,
